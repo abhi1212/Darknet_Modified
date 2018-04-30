@@ -596,6 +596,12 @@ void fill_gpu(int N, float ALPHA, float * X, int INCX);
 void scal_gpu(int N, float ALPHA, float * X, int INCX);
 void copy_gpu(int N, float * X, int INCX, float * Y, int INCY);
 
+void sgemm_gpu(int TA, int TB, int M, int N, int K, float ALPHA, 
+        float *A_gpu, int lda, 
+        float *B_gpu, int ldb,
+        float BETA,
+        float *C_gpu, int ldc);
+
 void cuda_set_device(int n);
 void cuda_free(float *x_gpu);
 float *cuda_make_array(float *x, size_t n);

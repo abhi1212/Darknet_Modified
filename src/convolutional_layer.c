@@ -7,6 +7,7 @@
 #include "gemm.h"
 #include <stdio.h>
 #include <time.h>
+#include "sgemm.h"
 
 #ifdef AI2
 #include "xnor_layer.h"
@@ -441,9 +442,16 @@ void backward_bias(float *bias_updates, float *delta, int batch, int n, int size
     }
 }
 
+
+/********Important********************************************************/
+
+
+
 void forward_convolutional_layer(convolutional_layer l, network net)
 {
     int i, j;
+
+    printf("Code has reached CPU forward Convolutional Layer\n");
 
     fill_cpu(l.outputs*l.batch, 0, l.output, 1);
 
@@ -465,6 +473,7 @@ void forward_convolutional_layer(convolutional_layer l, network net)
 
             im2col_cpu(net.input + (i*l.groups + j)*l.c/l.groups*l.h*l.w,
                 l.c/l.groups, l.h, l.w, l.size, l.stride, l.pad, b);
+	    printf("CPU Code has called gemm once\n");
             gemm(0,0,m,n,k,1,a,k,b,n,1,c,n);
         }
     }
@@ -478,6 +487,17 @@ void forward_convolutional_layer(convolutional_layer l, network net)
     activate_array(l.output, l.outputs*l.batch, l.activation);
     if(l.binary || l.xnor) swap_binary(&l);
 }
+
+
+
+
+
+/*****************************************************************************************************************************/
+
+
+
+
+
 
 void backward_convolutional_layer(convolutional_layer l, network net)
 {

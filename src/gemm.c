@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "sgemm.h"
+
 
 void gemm_bin(int M, int N, int K, float ALPHA, 
         char  *A, int lda, 
@@ -30,7 +32,7 @@ void gemm_bin(int M, int N, int K, float ALPHA,
 float *random_matrix(int rows, int cols)
 {
     int i;
-    float *m = calloc(rows*cols, sizeof(float));
+    float *m =(float*) calloc(rows*cols, sizeof(float));
     for(i = 0; i < rows*cols; ++i){
         m[i] = (float)rand()/RAND_MAX;
     }
@@ -168,6 +170,12 @@ void gemm_cpu(int TA, int TB, int M, int N, int K, float ALPHA,
 #ifdef GPU
 
 #include <math.h>
+#include "sgemm.h"
+#include "gemm.h"
+#include "utils.h"
+#include "cuda.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void gemm_gpu(int TA, int TB, int M, int N, int K, float ALPHA, 
         float *A_gpu, int lda, 
@@ -175,10 +183,51 @@ void gemm_gpu(int TA, int TB, int M, int N, int K, float ALPHA,
         float BETA,
         float *C_gpu, int ldc)
 {
-    cublasHandle_t handle = blas_handle();
+
+   printf("Gemm.c has started\n");
+   
+   /*sgemm_gpu( TA,  TB, M, N, K, ALPHA, 
+         A_gpu, lda, 
+         B_gpu, ldb,
+         BETA,
+         C_gpu, ldc);*/ 
+    
+    printf("Ta is %d\n",TA);
+    printf("Tb is %d\n",TB);
+    printf("Lda is %d\n",lda);
+    printf("Ldb is %d\n",ldb);
+    printf("Ldc is %d\n",ldc);
+    printf("M is %d\n",M);
+    printf("K is %d\n",K);
+    printf("N is %d\n",N);
+    printf("ALPHA is %f\n",ALPHA);
+    printf("BETA is %f\n",BETA);
+    printf("I am here in gemm_gpu");    
+
+    
+    /*int i=0;
+    int j=0;
+    for(i=0;i<N;i++)
+    {
+	for(j=0;j<M;j++)
+	{
+		printf("%f",C_gpu[i*ldc+j]);
+	}
+	printf("\n");
+    }*/
+	
+
+
+   
+   cublasHandle_t handle = blas_handle();
     cudaError_t status = cublasSgemm(handle, (TB ? CUBLAS_OP_T : CUBLAS_OP_N), 
             (TA ? CUBLAS_OP_T : CUBLAS_OP_N), N, M, K, &ALPHA, B_gpu, ldb, A_gpu, lda, &BETA, C_gpu, ldc);
     check_error(status);
+ 
+   
+    
+
+    //printf("Cublas has ended Successfully\n");
 }
 
 #include <stdio.h>
@@ -245,7 +294,7 @@ void time_gpu(int TA, int TB, int m, int k, int n)
 }
 
 
-void test_gpu_accuracy(int TA, int TB, int m, int k, int n)
+/*void test_gpu_accuracy(int TA, int TB, int m, int k, int n)
 {
     srand(0);
     float *a;
@@ -280,7 +329,7 @@ void test_gpu_accuracy(int TA, int TB, int m, int k, int n)
     free(b);
     free(c);
     free(c_gpu);
-}
+}*/
 
 int test_gpu_blas()
 {

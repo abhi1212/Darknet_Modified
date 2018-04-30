@@ -6,6 +6,7 @@
 #include "gemm.h"
 #include <stdio.h>
 #include <time.h>
+#include "sgemm.h"
 
 int local_out_height(local_layer l)
 {

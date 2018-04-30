@@ -292,7 +292,7 @@ void forward_connected_layer_gpu(layer l, network net)
     int m = l.batch;
     int k = l.inputs;
     int n = l.outputs;
-    float * a = net.input_gpu;
+    float * a = net.input_gpu;       //This is where the A,b and C matrices get their values
     float * b = l.weights_gpu;
     float * c = l.output_gpu;
     gemm_gpu(0,1,m,n,k,1,a,k,b,k,1,c,n);
